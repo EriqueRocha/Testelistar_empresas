@@ -1,6 +1,7 @@
 package com.example.testelistarempresas.data
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.example.testelistarempresas.data.domain.PerfilEmpresaData
 import com.example.testelistarempresas.data.remote.EmpresaApi
@@ -30,13 +31,5 @@ object EmpresaRepository {
         }
     }
 
-    fun findEmpresa(empresaId: Int) = liveData{
-        emit(State.Wait)
-        try {
-            emit(State.Success(data = restApi.findEmpresa(empresaId)))
-        }catch (e: Exception){
-            Log.e(TAG, e.message, e)
-            emit(State.Error(e.message))
-        }
-    }
+
 }

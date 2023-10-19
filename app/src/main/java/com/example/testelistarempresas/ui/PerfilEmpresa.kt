@@ -1,52 +1,69 @@
 package com.example.testelistarempresas.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import com.example.testelistarempresas.data.EmpresaRepository
-import com.example.testelistarempresas.data.State
+import com.example.testelistarempresas.data.remote.EmpresaApi
 import com.example.testelistarempresas.databinding.ActivityPerfilEmpresaBinding
-import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class PerfilEmpresa : AppCompatActivity() {
-
     private val binding by lazy { ActivityPerfilEmpresaBinding.inflate(layoutInflater) }
-
-    private val viewModel by viewModels<EmpresaStatementViewModel>()
-
-    val empresaId = intent.getIntExtra("EMPRESA_ID", -1)
+    private var empresaId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // Obter empresaId da Intent
+        empresaId = intent.getIntExtra("EMPRESA_ID", -1)
+
         if (empresaId != -1) {
             empresaInfo()
         } else {
-
+            // Lógica adicional, se necessário
         }
-
     }
 
     private fun empresaInfo() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://eriquerocha.github.io/Lista/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
-        viewModel.findEmpresa(empresaId).observe(this){state ->
-            when(state){
-                is State.Error -> {
-                    state.message?.let { Snackbar.make(binding.imageView, it, Snackbar.LENGTH_LONG).show() }
+        val service = retrofit.create(EmpresaApi::class.java)
+
+        binding.progressBar.visibility = View.VISIBLE
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {Log.d("PerfilEmpresa", "empresaId: $empresaId")
+                val empresa = service.findEmpresa(empresaId)
+
+                withContext(Dispatchers.Main) {
+                    Glide.with(this@PerfilEmpresa)
+                        .load(empresa.image)
+                        .into(binding.imageView)
+
+                    binding.nomeEmpresa.text = empresa.nome
+                    binding.descricao.text = empresa.descricao
+                    binding.contato.text = empresa.contato
+
+                    binding.progressBar.visibility = View.INVISIBLE
                 }
-                is State.Success -> {
-                    val empresa = state.data
-                    binding.nomeEmpresa.text = empresa?.nome
-                    binding.descricao.text = empresa?.descricao
-                    binding.contato.text = empresa?.contato
-                    Glide.with(this).load(empresa?.image).into(binding.imageView)
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    binding.progressBar.visibility = View.INVISIBLE
                 }
-                else -> {}
             }
         }
     }
+
 }
