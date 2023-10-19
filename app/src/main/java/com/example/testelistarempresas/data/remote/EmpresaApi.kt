@@ -11,7 +11,7 @@ interface EmpresaApi {
     @GET("imagens-perfil.json")
     suspend fun findEmpresaStatement(@Query("id") empresaHolderId: Int): List<ListEmpresa>
 
-    @GET("perfil-empresa.json")
-    suspend fun findEmpresas(@Query("id") empresaId: Int): List<PerfilEmpresaData>
+    @GET("perfil/{id}.json")
+    suspend fun findEmpresa(@Query("id") empresaId: Int): PerfilEmpresaData
 
 }

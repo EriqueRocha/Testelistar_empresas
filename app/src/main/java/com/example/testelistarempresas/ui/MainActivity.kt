@@ -3,6 +3,7 @@ package com.example.testelistarempresas.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.testelistarempresas.adapter.EmpresaAdapter
@@ -25,9 +26,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.rvMain.layoutManager = GridLayoutManager(this,2)
 
-        binding.rvMain.adapter = EmpresaAdapter(dataSet){ empresaId ->
+        binding.rvMain.adapter = EmpresaAdapter(dataSet){ position ->
+            val empresa = dataSet[position]
             val intent = Intent(this@MainActivity, PerfilEmpresa::class.java)
-            intent.putExtra("EMPRESA_ID", empresaId)
+            intent.putExtra("EMPRESA_ID", empresa.id)
             startActivity(intent)
         }
 

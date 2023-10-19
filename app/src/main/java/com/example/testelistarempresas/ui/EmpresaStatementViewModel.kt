@@ -7,6 +7,6 @@ class EmpresaStatementViewModel: ViewModel(){
 
     fun findEmpresaStatement(empresaId: Int) = EmpresaRepository.findEmpresaStatement(empresaId)
 
-    fun findEmpresas(empresaId: Int) = EmpresaRepository.findEmpresas(empresaId)
+    fun findEmpresa(empresaId: Int) = EmpresaRepository.findEmpresa(empresaId)
 
 }

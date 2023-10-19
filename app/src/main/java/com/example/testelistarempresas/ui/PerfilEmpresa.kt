@@ -2,15 +2,20 @@ package com.example.testelistarempresas.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.testelistarempresas.data.EmpresaRepository
 import com.example.testelistarempresas.data.State
 import com.example.testelistarempresas.databinding.ActivityPerfilEmpresaBinding
+import com.google.android.material.snackbar.Snackbar
 
 class PerfilEmpresa : AppCompatActivity() {
 
     private val binding by lazy { ActivityPerfilEmpresaBinding.inflate(layoutInflater) }
+
+    private val viewModel by viewModels<EmpresaStatementViewModel>()
 
     val empresaId = intent.getIntExtra("EMPRESA_ID", -1)
 
@@ -18,47 +23,30 @@ class PerfilEmpresa : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        filtroList()
+        if (empresaId != -1) {
+            empresaInfo()
+        } else {
+
+        }
 
     }
 
-    private fun filtroList() {
-        val empresaLiveData = EmpresaRepository.findEmpresas(empresaId)
-        empresaLiveData.observe(this, Observer { state ->
-            when (state) {
-                is State.Success -> {
-                    val empresasList = state.data
-                    if (empresasList != null && empresasList.isNotEmpty()) {
-                        val empresaData = empresasList.firstOrNull { it.id == empresaId }
-                        if (empresaData != null) {
+    private fun empresaInfo() {
 
-                            Glide.with(binding.root.context)
-                                .load(empresaData.image)
-                                .centerCrop()
-                                .into(binding.imageView)
-
-                            binding.nomeEmpresa.text = empresaData.nome
-                            binding.descricao.text = empresaData.descricao
-                            binding.contato.text = empresaData.contato
-
-
-                        } else {
-
-                        }
-                    } else {
-
-                    }
-                }
+        viewModel.findEmpresa(empresaId).observe(this){state ->
+            when(state){
                 is State.Error -> {
-
-                    state.message?.let {
-
-                    }
+                    state.message?.let { Snackbar.make(binding.imageView, it, Snackbar.LENGTH_LONG).show() }
                 }
-                is State.Wait -> {
-
+                is State.Success -> {
+                    val empresa = state.data
+                    binding.nomeEmpresa.text = empresa?.nome
+                    binding.descricao.text = empresa?.descricao
+                    binding.contato.text = empresa?.contato
+                    Glide.with(this).load(empresa?.image).into(binding.imageView)
                 }
+                else -> {}
             }
-        })
+        }
     }
 }

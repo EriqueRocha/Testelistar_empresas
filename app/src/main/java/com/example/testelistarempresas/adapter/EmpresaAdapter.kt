@@ -10,7 +10,8 @@ import com.example.testelistarempresas.databinding.MainItemBinding
 class EmpresaAdapter(private val dataSet: List<ListEmpresa>, val onClickListener: (Int) -> Unit = {}) : RecyclerView.Adapter<EmpresaAdapter.ViewHolder>()  {
 
     class ViewHolder(private val binding: MainItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(item: ListEmpresa) = with(binding){
+        fun bind(item: ListEmpresa, position: Int) = with(binding){
+
             Glide.with(root.context)
                 .load(item.image)
                 .centerCrop()
@@ -27,7 +28,7 @@ class EmpresaAdapter(private val dataSet: List<ListEmpresa>, val onClickListener
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = dataSet[position] //posição do item
-        viewHolder.bind(item) //passo a posição do item para o ViewHolder
+        viewHolder.bind(item, position) //passo a posição do item para o ViewHolder
 
         //val card: LinearLayout = viewHolder.itemView.findViewById(R.id.item_color_container)
 

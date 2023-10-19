@@ -30,10 +30,10 @@ object EmpresaRepository {
         }
     }
 
-    fun findEmpresas(empresaId: Int) = liveData{
+    fun findEmpresa(empresaId: Int) = liveData{
         emit(State.Wait)
         try {
-            emit(State.Success(data = restApi.findEmpresas(empresaId)))
+            emit(State.Success(data = restApi.findEmpresa(empresaId)))
         }catch (e: Exception){
             Log.e(TAG, e.message, e)
             emit(State.Error(e.message))
