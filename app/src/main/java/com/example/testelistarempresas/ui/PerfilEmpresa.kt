@@ -1,9 +1,7 @@
 package com.example.testelistarempresas.ui
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
 import com.example.testelistarempresas.data.remote.EmpresaApi
@@ -26,14 +24,16 @@ class PerfilEmpresa : AppCompatActivity() {
         // Obter empresaId da Intent
         empresaId = intent.getIntExtra("EMPRESA_ID", -1)
 
+        //empresaId -= 1
+
         if (empresaId != -1) {
-            empresaInfo()
+            empresaInfo(empresaId)
         } else {
             // Lógica adicional, se necessário
         }
     }
 
-    private fun empresaInfo() {
+    private fun empresaInfo(empresaId: Int) {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://eriquerocha.github.io/Lista/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -44,7 +44,7 @@ class PerfilEmpresa : AppCompatActivity() {
         binding.progressBar.visibility = View.VISIBLE
 
         CoroutineScope(Dispatchers.IO).launch {
-            try {Log.d("PerfilEmpresa", "empresaId: $empresaId")
+            try {
                 val empresa = service.findEmpresa(empresaId)
 
                 withContext(Dispatchers.Main) {
@@ -61,9 +61,11 @@ class PerfilEmpresa : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     binding.progressBar.visibility = View.INVISIBLE
+                    // Trate o erro aqui, se necessário
                 }
             }
         }
     }
-
 }
+
+

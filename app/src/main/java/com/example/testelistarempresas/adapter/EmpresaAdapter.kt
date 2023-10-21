@@ -28,13 +28,13 @@ class EmpresaAdapter(private val dataSet: List<ListEmpresa>, val onClickListener
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = dataSet[position] //posição do item
+        val adjustedId = item.id - 1
         viewHolder.bind(item, position) //passo a posição do item para o ViewHolder
 
         //val card: LinearLayout = viewHolder.itemView.findViewById(R.id.item_color_container)
 
-
         viewHolder.itemView.setOnClickListener{
-            onClickListener(item.id)
+            onClickListener(adjustedId)
         }
 
 

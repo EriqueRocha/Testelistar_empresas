@@ -26,10 +26,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.rvMain.layoutManager = GridLayoutManager(this,2)
 
-        binding.rvMain.adapter = EmpresaAdapter(dataSet){ position ->
+        binding.rvMain.adapter = EmpresaAdapter(dataSet) { position ->
             val empresa = dataSet[position]
             val intent = Intent(this@MainActivity, PerfilEmpresa::class.java)
             intent.putExtra("EMPRESA_ID", empresa.id)
+            Log.d("APIResponse", "Response: ${empresa}")
             startActivity(intent)
         }
 
